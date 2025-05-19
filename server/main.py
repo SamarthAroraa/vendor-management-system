@@ -87,12 +87,16 @@ MAX_TOKENS = 30000
 
 @app.post("/upload_spreadsheet/")
 async def upload_spreadsheet(files: list[UploadFile] = File(...), user_prompt: str = Form(...)):
-    print("userp", user_prompt)
+    print("userp", user_prompt, os.environ.get("GEMINI_API_KEY"))
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
 
     uploaded_files = []
+    temp_folder = "./temp"
+    if not os.path.exists(temp_folder):
+        os.makedirs(temp_folder)
+    print(os.listdir("./temp"))
     for file in files:
         # Save the uploaded file to a temporary location
         file_location = f"./temp/{file.filename}"
