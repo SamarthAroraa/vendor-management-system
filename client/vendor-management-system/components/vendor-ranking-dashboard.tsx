@@ -56,7 +56,9 @@ export default function VendorRankingDashboard() {
       setFilteredVendors(rankedVendors);
       setIsRanked(true);
       setIsLoading(false);
-      setExplanation("Weighted average of Vendor Evaluation Score, FI RFT Score, AOQL Score, Testing Score, and Pre-Production Score. Weights: Vendor Evaluation (0.25), FI RFT Score (0.25), AOQL Score (0.10), Testing Score (0.20), Pre-Production Score (0.20");
+      setExplanation(
+        "Weighted average of Vendor Evaluation Score, FI RFT Score, AOQL Score, Testing Score, and Pre-Production Score. Weights: Vendor Evaluation (0.25), FI RFT Score (0.25), AOQL Score (0.10), Testing Score (0.20), Pre-Production Score (0.20)"
+      );
     } catch (error) {
       console.error("Error ranking vendors:", error);
       setIsLoading(false);
@@ -79,8 +81,10 @@ export default function VendorRankingDashboard() {
     };
 
     try {
+      const apiBaseUrl =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
       const response = await fetch(
-        "http://127.0.0.1:8000/upload_spreadsheet/",
+        `${apiBaseUrl}/upload_spreadsheet/`,
         requestOptions
       );
       console.log("response", response);

@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 SYSTEM_INSTRUCTION="""This is the vendor info for some key vendors in our fashion business, 
-give them scores, rank them and give reasoning. Just give the JSON object and nothing else. It is critical that you Do not change the 
+give them scores, rank them and give reasoning. Just give the JSON object ranked on the final score and nothing else. It is critical that you Do not change the 
 structure or keys of the json object as it is used for parsing.''
 For the ranking, table, you must provide a json object with the following fields: 
 {
@@ -36,6 +36,7 @@ For the ranking, table, you must provide a json object with the following fields
       "Quality Score": 92,
       "Tech Score": 88,
       "OTIF %": 95,
+      "Margin Score": 65,
       "Final Score": 92,
       "Strategy": "Cost Efficiency and Quality",
       "Reasoning": "Consistent performance across all metrics."
@@ -48,6 +49,7 @@ For the ranking, table, you must provide a json object with the following fields
       "Quality Score": 88,
       "Tech Score": 82,
       "OTIF %": 90,
+      "Margin Score": 65,
       "Final Score": 88,
       "Strategy": "Quality and Delivery Time",
       "Reasoning": "Strong delivery performance with good quality."
@@ -57,7 +59,7 @@ For the ranking, table, you must provide a json object with the following fields
 
 I repeat, it is critical that you Do not change the structure or keys of the json object as it is used for parsing.
 """
-FORMAT_PROMPT="""Format the following JSON object into the given format. Just give the JSON object and nothing else. It is critical that you Do not change the 
+FORMAT_PROMPT="""Format the following JSON object into the given format. Just give the JSON object ranked on the final score and nothing else. It is critical that you Do not change the 
 structure or keys of the json object as it is used for parsing.
 {
   "calculation_strategy": "the strategy used to calculate the score",
@@ -70,6 +72,7 @@ structure or keys of the json object as it is used for parsing.
       "Quality Score": 92,
       "Tech Score": 88,
       "OTIF %": 95,
+      "Margin Score": 65,
       "Final Score": 92,
       "Strategy": "Cost Efficiency and Quality",
       "Reasoning": "Consistent performance across all metrics."
