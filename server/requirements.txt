@@ -114,7 +114,7 @@ python-multipart==0.0.20
 pytz==2025.1
 PyYAML==6.0.1
 # Editable install with no version control (rag-chroma-private==0.1.0)
--e /Users/samartharora/Documents/projects/local-rag/packages/rag-chroma-private
+# -e /Users/samartharora/Documents/projects/local-rag/packages/rag-chroma-private
 rapidfuzz==3.5.2
 regex==2023.10.3
 requests==2.31.0
