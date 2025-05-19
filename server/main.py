@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware  # Import CORS middleware
-from google import genai
-from google.genai import types
+from google.generativeai import genai
+from google.generativeai import types
 import dotenv
 import os
 import shutil
