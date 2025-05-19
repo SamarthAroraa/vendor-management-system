@@ -40,6 +40,7 @@ export default function VendorTable({ vendors }: VendorTableProps) {
               </TableCell>
             </TableRow>
           ) : (
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             vendors.map((vendor, index) => (
               <TableRow key={vendor.id}>
                 {Object.keys(vendor).map(

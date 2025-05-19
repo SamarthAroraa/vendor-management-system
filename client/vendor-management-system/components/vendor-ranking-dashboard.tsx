@@ -11,6 +11,7 @@ import type { Vendor } from "@/types/vendor";
 
 export default function VendorRankingDashboard() {
   const [files, setFiles] = useState<File[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
