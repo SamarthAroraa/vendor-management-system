@@ -24,6 +24,12 @@ app.add_middleware(
 SYSTEM_INSTRUCTION="""This is the vendor info for some key vendors in our fashion business, 
 give them scores, rank them and give reasoning. Just give the JSON object ranked on the final score and nothing else. It is critical that you Do not change the 
 structure or keys of the json object as it is used for parsing.''
+Use this ranking framework weightage:
+    - Quality Score: 42%
+    - On time delivery 25%
+    - Magin Score: 16%
+    - Fit Score: 10%
+    - Compliance: 7%
 For the ranking, table, you must provide a json object with the following fields: 
 {
   "calculation_strategy": "the strategy used to calculate the score",
@@ -59,7 +65,7 @@ For the ranking, table, you must provide a json object with the following fields
 
 I repeat, it is critical that you Do not change the structure or keys of the json object as it is used for parsing.
 """
-FORMAT_PROMPT="""Format the following JSON object into the given format. Just give the JSON object ranked on the final score and nothing else. It is critical that you Do not change the 
+FORMAT_PROMPT="""Format the following JSON object into the given format. Just give the JSON object ranked on the final score and nothing else. It is critical that you Do not change the    
 structure or keys of the json object as it is used for parsing.
 {
   "calculation_strategy": "the strategy used to calculate the score",
@@ -84,7 +90,9 @@ structure or keys of the json object as it is used for parsing.
 }
 Just give the JSON object and nothing else.
 """
-
+MOCK_RESPONSE="""
+```json\n{"calculation_strategy": "Weighted average of key metrics, normalized and scaled to a 100-point scale.  Weights: Margin (10%), OTIF (25%), Tech Rating (15%), Quality Rating (25%), Compliance (25%).  Where data was missing, a conservative average was applied to avoid skewing results.", "vendors": [{"Rank": 1, "Vendor Name": "Teena Knit Garments", "Main Product": "Core T-Shirts , Athleisure", "Compliance Score": 100, "Quality Score": 100, "Tech Score": 100, "OTIF %": 94, "Margin Score": 51, "Final Score": 86, "Strategy": "Focus on maintaining high compliance, quality, and tech scores while improving margin.", "Reasoning": "Excellent scores in compliance, quality, and tech, but margin needs improvement. High style count indicates strong design capabilities."}, {"Rank": 2, "Vendor Name": "Kratika Fashion", "Main Product": "Tops, Dresses", "Compliance Score": 100, "Quality Score": 100, "Tech Score": 80, "OTIF %": 100, "Margin Score": 50, "Final Score": 86, "Strategy": "Maintain high scores in compliance, quality, and OTIF while improving tech and margin.", "Reasoning": "Very strong in compliance, quality, and OTIF, but tech and margin are areas for potential growth. High style count suggests good design variety."}, {"Rank": 3, "Vendor Name": "Alla Moda Knitwear Private Limited", "Main Product": "Fashion Knits tops and winterwear", "Compliance Score": 100, "Quality Score": 100, "Tech Score": 100, "OTIF %": 100, "Margin Score": 44, "Final Score": 84, "Strategy": "Maintain high scores in compliance, quality, tech, and OTIF while improving margin.", "Reasoning": "Excellent scores in compliance, quality, tech, and OTIF, but margin is an area for potential growth. Good style count indicates a solid product line."}, {"Rank": 4, "Vendor Name": "Ma\'am Arts", "Main Product": "Tops, Dresses", "Compliance Score": 100, "Quality Score": 100, "Tech Score": 100, "OTIF %": 100, "Margin Score": 49, "Final Score": 84, "Strategy": "Maintain high scores in compliance, quality, tech, and OTIF while improving margin.", "Reasoning": "Excellent scores in compliance, quality, tech, and OTIF, but margin is an area for potential growth. Good style count indicates a solid product line."}, {"Rank": 5, "Vendor Name": "Trucarekidz India Private Limited", "Main Product": "T- shirts", "Compliance Score": 80, "Quality Score": 80, "Tech Score": 100, "OTIF %": 100, "Margin Score": 45, "Final Score": 73, "Strategy": "Maintain high scores in tech and OTIF while improving compliance, quality, and margin.", "Reasoning": "Very strong in tech and OTIF, but compliance, quality, and margin are areas for potential growth. Good style count indicates a solid product line."}]}```
+"""
 TEMPERATURE = 0.1
 MAX_TOKENS = 30000
 
@@ -119,7 +127,7 @@ async def upload_spreadsheet(files: list[UploadFile] = File(...), user_prompt: s
         else:
             uploaded_files.append(client.files.upload(file=file_location))
 
-    model = "gemini-2.0-flash"
+    model = "gemini-2.0-flash-lite"
     contents = [
         types.Content(
             role="user",
@@ -177,7 +185,8 @@ async def upload_spreadsheet(files: list[UploadFile] = File(...), user_prompt: s
         contents=contents,
         config=generate_content_config,
     ):
-        response_text += chunk.text
+        if chunk.text:
+            response_text += chunk.text
     response_string = response_text 
     # Find the JSON content within the triple backticks
     json_start = response_string.find('```json\n') + len('```json\n')
@@ -190,7 +199,7 @@ async def upload_spreadsheet(files: list[UploadFile] = File(...), user_prompt: s
         parsed_data = json.loads(json_string)
         print("parsed_data", parsed_data)
     formatted_response = client.models.generate_content(
-        model="gemini-2.0-flash", # Replace with the appropriate model ID
+        model="gemini-2.0-flash-lite", # Replace with the appropriate model ID
         contents=[
             types.Part.from_text(
                 text=json.dumps(parsed_data)  # Convert parsed_data to JSON string
